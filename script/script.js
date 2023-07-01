@@ -9,11 +9,13 @@ const expandButton = document.getElementById("expand-button");
 fetch('/data.txt')
     .then(response => response.text())
     .then(text => {
+        console.log(text);
         // magic here
         const lines = text.split('\n');
         let data = [];
         let question, answer;
         lines.forEach(line => {
+            line = line.trim(); // remove wss (?is the problem)
             if (line.match(/^\d+\./)) { // If line starts with a number and dot, it's a q
                 if (question) { // if q is not undefined -> Q&A to push to data (I hope)
                     data.push({
@@ -25,7 +27,7 @@ fetch('/data.txt')
                 question = line.split('. ')[1];
                 answer = '';
             } else if (line.startsWith('- ')) { // If line starts with "- ", it's part of the a
-                answer += line.split('- ')[1] + '\n';
+                answer += line + '\n';
             }
         });
         // last Q&A
@@ -33,6 +35,7 @@ fetch('/data.txt')
             q: question.trim(),
             a: answer.trim()
         });
+        console.log(data);
 
         // data array is here now
         data.forEach((item) => {
@@ -47,9 +50,6 @@ function createQuestionItem(question, answer) {
 
     const questionTitle = document.createElement("h3");
     questionTitle.textContent = question;
-    questionTitle.onclick = function() {
-        answerText.style.display = answerText.style.display === "none" ? "block" : "none";
-    }
     questionItem.appendChild(questionTitle);
 
     const answerText = document.createElement("p");
@@ -58,10 +58,14 @@ function createQuestionItem(question, answer) {
     answerText.style.display = "none"; // hide the answer initially
     questionItem.appendChild(answerText);
 
+    questionTitle.addEventListener("click", function() {
+        answerText.style.display = answerText.style.display === "none" ? "block" : "none";
+    });
+
     return questionItem;
 }
 
-// "Свернуть все" и "Развернуть все"
+// open all close all buttons
 collapseButton.addEventListener("click", function() {
     const answers = document.querySelectorAll(".answer");
     answers.forEach((item) => {
@@ -76,10 +80,3 @@ expandButton.addEventListener("click", function() {
     });
 });
 
-// раскрытие/сворачивания ответа
-questionContainer.addEventListener("click", function(event) {
-    const target = event.target;
-    if (target.matches("h3")) {
-        target.parentNode.classList.toggle("collapsed");
-    }
-});
