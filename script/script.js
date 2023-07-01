@@ -9,7 +9,7 @@ const collapseButton = document.getElementById("collapse-button");
 const expandButton = document.getElementById("expand-button");
 
 // qna from data
-fetch('/data.txt')
+fetch('data.txt')
     .then(response => response.text())
     .then(text => {
         console.log(text);
