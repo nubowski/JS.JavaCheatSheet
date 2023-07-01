@@ -2,6 +2,9 @@
 
 // container + buttons
 const questionContainer = document.getElementById("question-container");
+const column1 = document.getElementById("column-1");
+const column2 = document.getElementById("column-2");
+const column3 = document.getElementById("column-3");
 const collapseButton = document.getElementById("collapse-button");
 const expandButton = document.getElementById("expand-button");
 
@@ -38,9 +41,19 @@ fetch('/data.txt')
         console.log(data);
 
         // data array is here now
-        data.forEach((item) => {
+        data.forEach((item, index) => {
             const questionItem = createQuestionItem(item.q, item.a);
-            questionContainer.appendChild(questionItem);
+            switch (index % 3) {
+                case 0:
+                    column1.appendChild(questionItem);
+                    break;
+                case 1:
+                    column2.appendChild(questionItem);
+                    break;
+                case 2:
+                    column3.appendChild(questionItem);
+                    break;
+            }
         });
     });
 
